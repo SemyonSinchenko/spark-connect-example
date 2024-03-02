@@ -14,7 +14,7 @@ import java.io.IOException;
  * Such a class should represent an example of deequ MetricsRepository or
  * GraphAr Info* objects.
  */
-class ConfExample {
+public class ConfExample {
     private String strParamter;
     private Long longParameter;
 

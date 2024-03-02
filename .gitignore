@@ -318,3 +318,5 @@ pyrightconfig.json
 
 .classpath
 .project
+.idea
+connect.iml

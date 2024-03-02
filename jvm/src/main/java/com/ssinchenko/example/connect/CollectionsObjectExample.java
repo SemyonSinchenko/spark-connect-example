@@ -11,7 +11,7 @@ import java.util.Map;
  * This class may mimic examples from OSS projects which returns some
  * meta-information.
  */
-class CollectionsObjectExample {
+public class CollectionsObjectExample {
     public static List<String> getListOfString() {
         return List.of("a", "b", "c");
     }
