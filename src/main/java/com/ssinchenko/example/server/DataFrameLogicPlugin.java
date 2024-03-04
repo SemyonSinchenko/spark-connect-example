@@ -4,10 +4,17 @@ import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.ssinchenko.example.lib.DataFrameLogic;
 import com.ssinchenko.example.proto.CallDataFrameLogic;
+
+import java.util.List;
 import java.util.Optional;
+
+import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan;
 import org.apache.spark.sql.connect.planner.SparkConnectPlanner;
 import org.apache.spark.sql.connect.plugin.RelationPlugin;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 
 /**
  * The "right" way to use RelationPlugin. Just parse an input and return a "real" DataFrame. Nothing
@@ -20,7 +27,11 @@ public class DataFrameLogicPlugin implements RelationPlugin {
     try {
       relationProto = Any.parseFrom(relation);
     } catch (InvalidProtocolBufferException e) {
-      return Optional.empty();
+      var df = planner.sessionHolder().session().createDataFrame(
+              List.of(RowFactory.create(e.getMessage())),
+              new StructType(new StructField[]{new StructField("error", DataTypes.StringType, false, null)})
+      );
+      return Optional.of(df.logicalPlan());
     }
     if (relationProto.is(CallDataFrameLogic.class)) {
       return Optional.of(DataFrameLogic.createDummyDataFrame().logicalPlan());

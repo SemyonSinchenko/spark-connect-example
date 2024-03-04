@@ -6,6 +6,11 @@ from spark_connect_example.app_plugin import JavaLikeObject, call_command, creat
 
 if __name__ == "__main__":
     spark = SparkSession.builder.remote("sc://localhost:15002").getOrCreate()
+
+    df = create_dataframe_extension(spark)
+    df.printSchema()
+    df.show(10)
+
     temp_conf_file = Path("txt.config")
     with temp_conf_file.open(mode="w", encoding="utf-16") as tmp_file:
         tmp_file.writelines(["paramA", "\n", "100"])
@@ -19,8 +24,6 @@ if __name__ == "__main__":
     print(java_like.to_string())
 
     temp_conf_file.unlink()
-
-    create_dataframe_extension(spark).show(10)
 
     call_command(1, 2, "another_test_file", spark)
 
