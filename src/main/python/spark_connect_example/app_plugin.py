@@ -6,7 +6,7 @@ from pyspark.sql.connect import proto
 from pyspark.sql.connect.dataframe import DataFrame
 from pyspark.sql.connect.plan import LogicalPlan
 
-from spark_connect_example.proto.example.plugin_pb2 import CallCommandLikeLogic, CallDataFrameLogic, CallObjectManipulationLogic
+from spark_connect_example.proto.plugin_pb2 import CallCommandLikeLogic, CallDataFrameLogic, CallObjectManipulationLogic
 
 if TYPE_CHECKING:
     from pyspark.sql.connect.client import SparkConnectClient
@@ -27,7 +27,8 @@ class CallCommandPlan(LogicalPlan):
 
 
 def call_command(a: int, b: int, file_name: str, spark: SparkSession) -> None:
-    DataFrame.withPlan(CallCommandPlan(a, b, file_name), spark)
+    print(file_name)
+    DataFrame(CallCommandPlan(a, b, file_name), spark).collect()
 
 
 class CallDataFrameLogicPlan(LogicalPlan):
@@ -42,7 +43,7 @@ class CallDataFrameLogicPlan(LogicalPlan):
 
 
 def create_dataframe_extension(spark: SparkSession) -> DataFrame:
-    return DataFrame.withPlan(CallDataFrameLogicPlan(), spark)
+    return DataFrame(CallDataFrameLogicPlan(), spark)
 
 
 class CallObjectManipulationPlan(LogicalPlan):
@@ -78,33 +79,36 @@ class CallObjectManipulationPlan(LogicalPlan):
 
 
 class JavaLikeObject:
-    def __init__(self, config_file: str, spark: SparkSession) -> None:
-        query_plan = CallObjectManipulationPlan(new_object=True, jargs=[config_file])
-        df = DataFrame.withPlan(query_plan, spark)
-        id = df.collect()[0].asDict().get("id", -1)
-        self._id = id
+    def __init__(self, param_a: str, param_b: int, spark: SparkSession) -> None:
+        query_plan = CallObjectManipulationPlan(new_object=True, jargs=[param_a, str(param_b)])
+        df = DataFrame(query_plan, spark)
+        if "errorMessage" in df.columns:
+            err_msg = df.collect()[0].asDict().get("errorMessage", "")
+            raise ValueError(err_msg)
+        obj_id = df.collect()[0].asDict().get("id", -1)
+        self._id = obj_id
         self._spark = spark
 
     def get_str_parameter(self) -> str:
         query_plan = CallObjectManipulationPlan(object_id=self._id, method_name="getStrParameter")
-        return DataFrame.withPlan(query_plan, self._spark).collect()[0].asDict().get("strParameter", "")
+        return DataFrame(query_plan, self._spark).collect()[0].asDict().get("strParameter", "")
 
     def get_long_parameter(self) -> int:
         query_plan = CallObjectManipulationPlan(object_id=self._id, method_name="getLongParameter")
-        return DataFrame.withPlan(query_plan, self._spark).collect()[0].asDict().get("longParameter", -1)
+        return DataFrame(query_plan, self._spark).collect()[0].asDict().get("longParameter", -1)
 
     def set_str_parameter(self, str_par: str) -> None:
         query_plan = CallObjectManipulationPlan(object_id=self._id, method_name="setStrParameter", jargs=[str_par])
-        DataFrame.withPlan(query_plan, self._spark)
+        DataFrame(query_plan, self._spark).collect()
 
     def set_long_parameter(self, long_par: int) -> None:
         query_plan = CallObjectManipulationPlan(object_id=self._id, method_name="setLongParameter", jargs=[str(long_par)])
-        DataFrame.withPlan(query_plan, self._spark)
+        DataFrame(query_plan, self._spark).collect()
 
     def to_string(self) -> str:
         query_plan = CallObjectManipulationPlan(object_id=self._id, method_name="toString")
-        return DataFrame.withPlan(query_plan, self._spark).collect()[0].asDict().get("stringRepresentation", "")
+        return DataFrame(query_plan, self._spark).collect()[0].asDict().get("stringRepresentation", "")
 
     def delete(self) -> None:
         query_plan = CallObjectManipulationPlan(object_id=self._id, delete_object=True)
-        DataFrame.withPlan(query_plan, self._spark)
+        DataFrame(query_plan, self._spark)

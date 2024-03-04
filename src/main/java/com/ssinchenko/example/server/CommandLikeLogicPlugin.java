@@ -16,7 +16,7 @@ public class CommandLikeLogicPlugin implements CommandPlugin {
     try {
       commandProto = Any.parseFrom(command);
     } catch (InvalidProtocolBufferException e) {
-      return false;
+      throw new RuntimeException(e);
     }
     if (commandProto.is(CallCommandLikeLogic.class)) {
       try {

@@ -24,5 +24,7 @@ public class CommandLikeLogic {
     var fs = path.getFileSystem(spark.hadoopConf());
     var outputStream = fs.create(path);
     outputStream.writeUTF(String.format("FieldA: %d\nFieldB: %d", paramA, paramB));
+    outputStream.flush();
+    outputStream.close();
   }
 }

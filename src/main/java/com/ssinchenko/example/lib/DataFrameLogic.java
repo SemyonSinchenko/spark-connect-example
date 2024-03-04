@@ -11,23 +11,20 @@ import org.apache.spark.sql.types.StructType;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * A dummy class that represents any DataFrame logic.
- * The simplest case from all cases.
- */
+/** A dummy class that represents any DataFrame logic. The simplest case from all cases. */
 public class DataFrameLogic {
   public static Dataset<Row> createDummyDataFrame() {
     var schema =
         new StructType(
             new StructField[] {
-              new StructField("col1", DataTypes.LongType, true, null),
-              new StructField("col2", DataTypes.StringType, true, null),
-              new StructField("col3", DataTypes.BooleanType, true, null)
+              DataTypes.createStructField("col1", DataTypes.LongType, true),
+              DataTypes.createStructField("col2", DataTypes.StringType, true),
+              DataTypes.createStructField("col3", DataTypes.BooleanType, true)
             });
     var spark = SparkSession.active();
     var rows = new ArrayList<Row>();
     var gen = new Random();
-    for (int i = 0; i <= 1000; i++) {
+    for (int i = 0; i <= 10; i++) {
       rows.add(
           RowFactory.create(
               gen.nextLong(),

@@ -1,7 +1,5 @@
 syntax = 'proto3';
 
-package example;
-
 option java_multiple_files = true;
 option java_package = "com.ssinchenko.example.proto";
 
