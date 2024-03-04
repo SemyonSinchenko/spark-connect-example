@@ -1,0 +1,22 @@
+syntax = 'proto3';
+
+package example;
+
+option java_multiple_files = true;
+option java_package = "com.ssinchenko.example.proto";
+
+message CallCommandLikeLogic {
+  int64 paramA = 1;
+  int64 paramB = 2;
+  string paramC = 3;
+}
+
+message CallDataFrameLogic {}
+
+message CallObjectManipulationLogic {
+  int32 objectId = 1;
+  bool newObject = 2;
+  bool deleteObject = 3;
+  string methodName = 4;
+  repeated string args = 5;
+}

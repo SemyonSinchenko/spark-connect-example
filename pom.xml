@@ -31,7 +31,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-connect_2.12</artifactId>
+            <artifactId>spark-connect_${scala.binary}</artifactId>
             <version>${spark.version}</version>
             <scope>provided</scope>
             <exclusions>

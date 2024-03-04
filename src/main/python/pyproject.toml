@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "spark-connect-example"
+version = "0.1.0"
+description = ""
+authors = ["SemyonSinchenko <semyonsinchenko@yahoo.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [{include = "spark_connect_example"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+protobuf = "^4.25.3"
+pyspark = { version = "^3.5", extras = ["connect"] }
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+select = ["ALL"]
+line-length = 150
