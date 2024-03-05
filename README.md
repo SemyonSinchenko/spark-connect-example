@@ -1,4 +1,4 @@
-**Spark Connect extension**
+# Spark Connect extension
 
 [Link to the blog post](https://semyonsinchenko.github.io/ssinchenko/post/extending-spark-connect/)
 
